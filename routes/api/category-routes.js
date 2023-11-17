@@ -1,28 +1,49 @@
 const router = require('express').Router();
 const { Category, Product } = require('../../models');
 
-// The `/api/categories` endpoint
 
-router.get('/', (req, res) => {
-  // find all categories
-  // be sure to include its associated Products
+router.get('/', async (req, res) => {
+  const catData = await Category.findAll();
+  
+  return res.json(catData);
 });
 
-router.get('/:id', (req, res) => {
-  // find one category by its `id` value
-  // be sure to include its associated Products
+router.get('/:id', async(req, res) => {
+  const catData = await Category.findByPk(req.params.id);
+
+  return res.json(catData);
+  
 });
 
-router.post('/', (req, res) => {
-  // create a new category
+router.post('/', async (req, res) => {
+  const catData = await Category.create(req.body);
+
+  return res.json(catData);
 });
 
-router.put('/:id', (req, res) => {
-  // update a category by its `id` value
+router.put('/:id', async(req, res) => {
+  const catData = await Category.update(
+    { name: req.body.name
+    },
+    {
+      where: {
+        id: req.params.id
+      }
+    }
+  )
+  return res.json(catData)
+
 });
 
-router.delete('/:id', (req, res) => {
-  // delete a category by its `id` value
+router.delete('/:id', async(req, res) => {
+  const catData = await Category.destroy(
+    {
+      where: {
+        id: req.params.id
+      },
+    }
+  )
+  return res.json(catData);
 });
 
 module.exports = router;
