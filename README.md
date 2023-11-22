@@ -1,4 +1,10 @@
 # E-commerce
+![Static Badge](https://img.shields.io/badge/sequelize-blue)
+![Static Badge](https://img.shields.io/badge/javascript-yellow)
+![Static Badge](https://img.shields.io/badge/back-end-white)
+![Static Badge](https://img.shields.io/badge/MYSQL-red)
+![Static Badge](https://img.shields.io/badge/express-periwinkle)
+
 
 ## Table of Contents
 - [Description](#description)
