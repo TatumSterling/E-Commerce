@@ -15,15 +15,20 @@ router.get('/:id', async(req, res) => {
   
 });
 
-router.post('/', async (req, res) => {
-  const catData = await Category.create(req.body);
-
-  return res.json(catData);
+router.post('/',  (req, res) => {
+  Category.create(req.body)
+  .then((category) => {
+    res.status(200).json(category);
+  })
+  .catch((err) => {
+    res.status(400).json(err);
+  });
+;
 });
 
-router.put('/:id', async(req, res) => {
-  const catData = await Category.update(
-    { name: req.body.name
+router.put('/:id',(req, res) => {
+  Category.update( 
+    { category_name: req.body.category_name
     },
     {
       where: {
@@ -31,19 +36,40 @@ router.put('/:id', async(req, res) => {
       }
     }
   )
-  return res.json(catData)
-
+  .then(() => {
+    // Find the updated tag by its primary key (id)
+    return Category.findByPk(req.params.id);
+  })
+  .then((catData) => {
+    // Send the updated tag as the response
+    res.json(catData);
+  })
+  .catch((err) => {
+    // Handle errors
+    res.status(400).json(err);
+  });
 });
 
-router.delete('/:id', async(req, res) => {
-  const catData = await Category.destroy(
+router.delete('/:id', (req, res) => {
+  Category.destroy(
     {
       where: {
         id: req.params.id
       },
-    }
-  )
-  return res.json(catData);
-});
+    })    
+    .then((deleted) => {
+    
+      // Records were deleted
+      return res.json(deleted)
+    })
+    .catch((err) => {
+      // Handle errors
+      res.status(500).json(err);
+    });
+  });
+
+      // No records were deleted (tag with the specified ID not found)
+    
+
 
 module.exports = router;

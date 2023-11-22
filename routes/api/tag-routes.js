@@ -81,7 +81,7 @@ router.delete('/:id', (req, res) => {
         res.status(404).json({ message: 'Tag not found' });
       }
     })
-    .catch((err) => {
+    .catch(() => {
       // Handle errors
       res.status(500).json({ error: 'Internal Server Error' });
     });

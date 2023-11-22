@@ -16,21 +16,22 @@ router.get('/', async (req, res) => {
 });
 
 // get one product
-router.get('/:id', async(req, res) => {
-  try{
-    const productData = await Product.findByPk(req.params.id, {
-      include: [{ model: Category }, { model: Tag }]
+router.get('/:id', (req, res) => {
+
+  Product.findByPk(req.params.id, {
+      include: [{ model: Category }]
+    })
+    .then((productData) => {
+      if (!productData){
+        res.status(404).json({message: 'No product found with that id'});
+        return;
+      }
+      res.status(200).json(productData);
+
     });
 
-    if (!productData){
-      res.status(404).json({message: 'No product found with that id'});
-      return;
-    }
-    res.status(200).json(productData);
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
+
+  });
 
 // create new product
 router.post('/', (req, res) => {
@@ -102,24 +103,24 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', async(req, res) => {
-  try {
-    const productData = await Product.destroy({
+router.delete('/:id',(req, res) => {
+
+   Product.destroy({
       where: {
         id: req.params.id,
       },
+    })
+    .then((productData) => {
+      if (!productData) {
+        res.status(404).json({message: 'No product found with that id!'});
+        return 
+      }
+  
+      res.status(200).json({message: `deleted ${productData} product`});
+    })
+    .catch((err) => {
+      res.status(500).json(err)
     });
 
-    if (!productData) {
-      res.status(404).json({message: 'No product found with that id!'});
-      return 
-    }
-
-    res.status(200).json(productData);
-  } catch (err) {
-    res.status(500).json(err)
-  }
-  // delete one product by its `id` value
-});
-
+  });
 module.exports = router;
