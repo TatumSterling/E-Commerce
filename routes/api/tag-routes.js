@@ -36,34 +36,55 @@ router.get('/:id', async(req, res) => {
 
 router.post('/', (req, res) => {
   Tag.create(req.body)
-  .then((tag) => {
-    // if there's product tags, we need to create pairings to bulk create in the ProductTag model
-    if (req.body.productIds.length) {
-      const productTagIdArr = req.body.productIds.map((product_id) => {
-        return {
-          tag_id: tag.id,
-          product_id,
-        };
-      });
-      return ProductTag.bulkCreate(productTagIdArr);
-    }
-    // if no product tags, just respond
-    res.status(200).json(tag);
-  })
-  .then((productTagIds) => res.status(200).json(productTagIds))
-  .catch((err) => {
-    console.log(err);
-    res.status(400).json(err);
-  });
+}).then((tag) => {
+    res.status(200).json(tag)
+  
   // create a new tag
+}).catch((err) => {
+  res.status(400).json(err)
 });
 
 router.put('/:id', (req, res) => {
-  // update a tag's name by its `id` value
+  // Update a tag's name by its `id` value
+  Tag.update(req.body, {
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then(() => {
+      // Find the updated tag by its primary key (id)
+      return Tag.findByPk(req.params.id);
+    })
+    .then((tag) => {
+      // Send the updated tag as the response
+      res.json(tag);
+    })
+    .catch((err) => {
+      // Handle errors
+      res.status(400).json(err);
+    });
 });
 
 router.delete('/:id', (req, res) => {
-  // delete on tag by its `id` value
+  // Delete a tag by its `id` value
+  Tag.destroy({
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then((deletedCount) => {
+      if (deletedCount > 0) {
+        // Records were deleted
+        res.json({ message: 'Tag deleted successfully' });
+      } else {
+        // No records were deleted (tag with the specified ID not found)
+        res.status(404).json({ message: 'Tag not found' });
+      }
+    })
+    .catch((err) => {
+      // Handle errors
+      res.status(500).json({ error: 'Internal Server Error' });
+    });
 });
 
 module.exports = router;
